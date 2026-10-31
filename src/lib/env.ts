@@ -5,11 +5,24 @@ function num(value: string | undefined, fallback: number): number {
   return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
+function storageDriver(): "r2" | "blob" | "local" {
+  const v = process.env.STORAGE_DRIVER;
+  if (v === "r2" || v === "blob" || v === "local") return v;
+  // Connecting a Vercel Blob store adds this token, so Blob is the default on Vercel.
+  return process.env.BLOB_READ_WRITE_TOKEN ? "blob" : "local";
+}
+
 /** Server-side settings, read once from the environment. */
 export const env = {
-  siteUrl: (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, ""),
-  databaseUrl: process.env.DATABASE_URL || "file:./data/giftlink.db",
-  databaseAuthToken: process.env.DATABASE_AUTH_TOKEN || undefined,
+  // On Vercel, the project's production domain unless a custom one is set.
+  siteUrl: (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "") ||
+    "http://localhost:3000"
+  ).replace(/\/$/, ""),
+  // TURSO_* are the names the Turso integration on Vercel creates.
+  databaseUrl: process.env.DATABASE_URL || process.env.TURSO_DATABASE_URL || "file:./data/giftlink.db",
+  databaseAuthToken: process.env.DATABASE_AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN || undefined,
   pricePaise: num(process.env.PRICE_PAISE, 19900),
   linkLifetimeDays: num(process.env.LINK_LIFETIME_DAYS, 90),
   paymentMode: (process.env.PAYMENT_MODE === "razorpay" ? "razorpay" : "mock") as
@@ -19,7 +32,7 @@ export const env = {
   razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET || "",
   razorpayWebhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || "",
   allowMockInProduction: process.env.ALLOW_MOCK_PAYMENTS_IN_PRODUCTION === "true",
-  storageDriver: (process.env.STORAGE_DRIVER === "r2" ? "r2" : "local") as "r2" | "local",
+  storageDriver: storageDriver(),
   r2: {
     endpoint: (process.env.R2_ENDPOINT || "").replace(/\/$/, ""),
     bucket: process.env.R2_BUCKET || "",

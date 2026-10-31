@@ -6,6 +6,7 @@
     "setup": "node -e \"const fs=require('fs');if(!fs.existsSync('.env.local'))fs.copyFileSync('.env.example','.env.local');fs.mkdirSync('data/uploads',{recursive:true})\" && npm run db:push",
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "drizzle-kit migrate && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
+    "@vercel/blob": "^2.8.2",
     "aws4fetch": "^1.0.20",
     "canvas-confetti": "^1.9.4",
     "drizzle-orm": "^0.45.4",
