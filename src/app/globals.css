@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #fff8f0;
+  --cream-2: #fbeee0;
+  --ink: #24172b;
+  --ink-soft: #6b5a70;
+  --line: #ead9c8;
+  --coral: #ff5a4e;
+  --coral-deep: #e2433a;
+  --sun: #ffc24b;
+  --mint: #6fd3bd;
+  --plum: #2b1846;
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-cream-2: var(--cream-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-coral: var(--coral);
+  --color-coral-deep: var(--coral-deep);
+  --color-sun: var(--sun);
+  --color-mint: var(--mint);
+  --color-plum: var(--plum);
+  --font-sans: var(--nf-body);
+  --font-display: var(--nf-display);
+  --font-hand: var(--nf-hand);
+  /* Page width for every marketing section (max-w-page) */
+  --container-page: 86rem;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--nf-body), system-ui, sans-serif;
+}
+
+/* Subtle paper grain on the marketing pages */
+.paper {
+  background-color: var(--cream);
+  background-image: radial-gradient(rgba(36, 23, 43, 0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/*
+ * The screen every recipient experience draws into. It is a size container, so templates
+ * use cqw/cqh units (never vw/vh/dvh) and look right full-screen AND inside phone-frame previews.
+ */
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* A 390×844 phone screen, for covers and static previews (scale it with a wrapper). */
+.screen {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  overflow: hidden;
+  container-type: size;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 62%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 44% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 63% 38%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 78% 22%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 70%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 8% 84%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 52% 88%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 36% 32%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 94% 46%, #fff 50%, transparent 51%);
+  opacity: 0.55;
+  animation: twinkle 5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.25; }
+  to { opacity: 0.7; }
+}
+
+@keyframes flicker {
+  0%, 100% { transform: scaleY(1) translateX(0); }
+  25% { transform: scaleY(1.12) translateX(-0.5px); }
+  50% { transform: scaleY(0.92) translateX(0.5px); }
+  75% { transform: scaleY(1.06) translateX(0); }
+}
+.flame {
+  transform-origin: 50% 100%;
+  animation: flicker 0.6s ease-in-out infinite;
+}
+
+@keyframes float-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-120cqh); }
+}
+
+@keyframes sway {
+  from { transform: translateX(-10px) rotate(-3deg); }
+  to { transform: translateX(10px) rotate(3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars, .flame { animation: none; }
+}

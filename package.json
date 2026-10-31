@@ -1,0 +1,47 @@
+{
+  "name": "giftlink",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "setup": "node -e \"const fs=require('fs');if(!fs.existsSync('.env.local'))fs.copyFileSync('.env.example','.env.local');fs.mkdirSync('data/uploads',{recursive:true})\" && npm run db:push",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.18.0",
+    "aws4fetch": "^1.0.20",
+    "canvas-confetti": "^1.9.4",
+    "drizzle-orm": "^0.45.4",
+    "lucide-react": "^1.66.0",
+    "motion": "^14.9.0",
+    "nanoid": "^6.0.2",
+    "next": "16.4.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
