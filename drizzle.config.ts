@@ -10,6 +10,10 @@ try {
 const url = process.env.DATABASE_URL || process.env.TURSO_DATABASE_URL || "file:./data/giftlink.db";
 const authToken = process.env.DATABASE_AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN || undefined;
 
+if (process.env.VERCEL && url.startsWith("file:")) {
+  throw new Error("No database configured: connect a Turso database (Vercel → Storage) or set DATABASE_URL, then redeploy.");
+}
+
 export default defineConfig({
   schema: "./src/lib/db/schema.ts",
   out: "./drizzle",
