@@ -33,6 +33,8 @@ export const env = {
   razorpayWebhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || "",
   allowMockInProduction: process.env.ALLOW_MOCK_PAYMENTS_IN_PRODUCTION === "true",
   storageDriver: storageDriver(),
+  // Must match how the Vercel Blob store was created (Vercel's default is private).
+  blobAccess: (process.env.BLOB_ACCESS === "public" ? "public" : "private") as "public" | "private",
   r2: {
     endpoint: (process.env.R2_ENDPOINT || "").replace(/\/$/, ""),
     bucket: process.env.R2_BUCKET || "",

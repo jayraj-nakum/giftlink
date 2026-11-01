@@ -1,7 +1,7 @@
 import "server-only";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { del, head, put } from "@vercel/blob";
+import { del, get, head, put } from "@vercel/blob";
 import { AwsClient } from "aws4fetch";
 import { env } from "@/lib/env";
 import { UPLOAD_KEY_RE } from "@/lib/ids";
@@ -9,7 +9,8 @@ import { UPLOAD_KEY_RE } from "@/lib/ids";
 /**
  * Photo storage. "local" keeps files in ./data/uploads and serves them from /media/<key>.
  * "r2" puts them in a Cloudflare R2 (or any S3-compatible) bucket behind a public domain.
- * "blob" puts them in a public Vercel Blob store; /media/<key> redirects to them.
+ * "blob" puts them in a Vercel Blob store; /media/<key> streams them (private store, the
+ * default) or redirects to them (public store, BLOB_ACCESS=public).
  * Keys are random (u/<21 chars>.webp), so a photo URL can't be guessed.
  */
 const LOCAL_DIR = path.join(process.cwd(), "data", "uploads");
@@ -36,7 +37,7 @@ const r2ObjectUrl = (key: string) => `${env.r2.endpoint}/${env.r2.bucket}/${key}
 
 export async function putObject(key: string, body: Buffer, contentType: string): Promise<void> {
   if (env.storageDriver === "blob") {
-    await put(key, body, { access: "public", contentType, addRandomSuffix: false, cacheControlMaxAge: 31536000 });
+    await put(key, body, { access: env.blobAccess, contentType, addRandomSuffix: false, cacheControlMaxAge: 31536000 });
     return;
   }
   if (env.storageDriver === "r2") {
@@ -61,7 +62,14 @@ export async function readLocalObject(key: string): Promise<Buffer | null> {
   }
 }
 
-/** Where a Blob photo really lives, or null if it's gone. */
+/** A photo from a private Blob store, or null if it's gone. */
+export async function readBlobObject(key: string): Promise<ReadableStream<Uint8Array> | null> {
+  if (!UPLOAD_KEY_RE.test(key)) return null;
+  const res = await get(key, { access: "private" });
+  return res?.statusCode === 200 ? res.stream : null;
+}
+
+/** Where a public Blob photo lives, or null if it's gone. */
 export async function blobUrl(key: string): Promise<string | null> {
   if (!UPLOAD_KEY_RE.test(key)) return null;
   try {
